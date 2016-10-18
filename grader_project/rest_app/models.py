@@ -15,14 +15,18 @@ class Grade(models.Model):
 
 class Schedule(models.Model):
     grade = models.ForeignKey(Grade)
+    timestamp = models.DateTimeField()
+    nome = models.CharField(max_length=50)
 
 
 class Activity(models.Model):
     schedule = models.ForeignKey(Schedule)
+    nome = models.CharField(max_length=50)
 
 
 class Agent(models.Model):
     organizer = models.ForeignKey(Organizer)
+    nome = models.CharField(max_length=50)
 
 
 class AgentActivityPreference(models.Model):
