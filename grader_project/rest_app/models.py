@@ -1,19 +1,33 @@
-from tastypie.utils.timezone import now
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from django.utils.text import slugify
 
 
-class Post(models.Model):
-    user = models.ForeignKey(User)
-    date_created = models.DateTimeField(default=now)
-    text = models.CharField(max_length=200)
-    slug = models.SlugField()
-    
-    def __unicode__(self):
-        return self.title
+class Organizer(User):
+    class Meta:
+        proxy = True
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.text)[:50]
-        return super(Entry, self).save(*args, **kwargs)
+
+class Grade(models.Model):
+    organizer = models.ForeignKey(Organizer)
+    nome = models.CharField(max_length=200)
+
+
+class Schedule(models.Model):
+    grade = models.ForeignKey(Grade)
+
+
+class Activity(models.Model):
+    schedule = models.ForeignKey(Schedule)
+
+
+class Agent(models.Model):
+    organizer = models.ForeignKey(Organizer)
+
+
+class AgentActivityPreference(models.Model):
+    agent = models.ForeignKey(Agent)
+    activity = models.ForeignKey(Activity)
+
+    validators = [MinValueValidator(0), MaxValueValidator(10)]
+    preference = models.FloatField(validators=validators)
